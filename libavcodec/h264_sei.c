@@ -42,6 +42,7 @@ void ff_h264_reset_sei(H264Context *h) {
     h->sei_dpb_output_delay         =  0;
     h->sei_cpb_removal_delay        = -1;
     h->sei_buffering_period_present =  0;
+    h->sei_unregistered_user_data_length = 0;
 }
 
 static int decode_picture_timing(H264Context *h){
@@ -97,26 +98,27 @@ static int decode_picture_timing(H264Context *h){
 
 static int decode_unregistered_user_data(H264Context *h, int size){
     MpegEncContext * const s = &h->s;
-    uint8_t user_data[16+256];
     int e, build, i;
 
     if(size<16)
         return -1;
 
-    for(i=0; i<sizeof(user_data)-1 && i<size; i++){
-        user_data[i]= get_bits(&s->gb, 8);
+    for(i=0; i<sizeof(h->sei_unregistered_user_data)-1 && i<size; i++){
+        h->sei_unregistered_user_data[i]= get_bits(&s->gb, 8);
     }
 
-    user_data[i]= 0;
-    e= sscanf(user_data+16, "x264 - core %d"/*%s - H.264/MPEG-4 AVC codec - Copyleft 2005 - http://www.videolan.org/x264.html*/, &build);
+    h->sei_unregistered_user_data[i]= 0;
+    e= sscanf(h->sei_unregistered_user_data+16, "x264 - core %d"/*%s - H.264/MPEG-4 AVC codec - Copyleft 2005 - http://www.videolan.org/x264.html*/, &build);
     if(e==1 && build>0)
         h->x264_build= build;
 
     if(s->avctx->debug & FF_DEBUG_BUGS)
-        av_log(s->avctx, AV_LOG_DEBUG, "user data:\"%s\"\n", user_data+16);
+        av_log(s->avctx, AV_LOG_DEBUG, "user data:\"%s\"\n", h->sei_unregistered_user_data+16);
 
     for(; i<size; i++)
         skip_bits(&s->gb, 8);
+
+    h->sei_unregistered_user_data_length = size;
 
     return 0;
 }

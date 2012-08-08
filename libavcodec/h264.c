@@ -4047,6 +4047,9 @@ static int decode_frame(AVCodecContext *avctx, void *data,
     s->flags  = avctx->flags;
     s->flags2 = avctx->flags2;
 
+    h->sei_unregistered_user_data_length = 0;
+    pict->sei_unregistered_user_data_length = 0;
+
     /* end of stream, output what is still in the buffers */
     if (buf_size == 0) {
  out:
@@ -4134,6 +4137,10 @@ not_extra:
     assert(pict->data[0] || !*data_size);
     ff_print_debug_info(s, pict);
     // printf("out %d\n", (int)pict->data[0]);
+
+    pict->sei_unregistered_user_data_length = h->sei_unregistered_user_data_length;
+    if (pict->sei_unregistered_user_data_length)
+        memcpy(pict->sei_unregistered_user_data, h->sei_unregistered_user_data, pict->sei_unregistered_user_data_length);
 
     return get_consumed_bytes(s, buf_index, buf_size);
 }

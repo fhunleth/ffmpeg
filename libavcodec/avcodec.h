@@ -1347,6 +1347,14 @@ typedef struct AVFrame {
      * - decoding: Read by user.
      */
     int64_t channels;
+
+    uint8_t sei_unregistered_user_data[16+256];
+
+    /**
+     * sei_unregistered_user_data_length is set to the SEI unregistered
+     * user data length if it was found.
+     */
+    int sei_unregistered_user_data_length;
 } AVFrame;
 
 /**
