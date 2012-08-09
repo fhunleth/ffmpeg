@@ -27,7 +27,7 @@
 #include "mem.h"
 
 #if defined(_WIN32)
-
+#if !defined(__MINGW32__)
 static int vsnprintf_fixed(char *s, size_t n, const char *format, va_list va)
 {
     va_list va2;
@@ -42,7 +42,7 @@ static int vsnprintf_fixed(char *s, size_t n, const char *format, va_list va)
 }
 
 #define vsnprintf vsnprintf_fixed
-
+#endif
 #endif
 
 #define av_bprint_room(buf) ((buf)->size - FFMIN((buf)->len, (buf)->size))
