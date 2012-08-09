@@ -3,3 +3,17 @@ Configuration options
 
 ./configure --disable-everything --enable-decoder=h264 --enable-parser=h264 --enable-shared
 
+
+Building on Windows
+-------------------
+
+(Assume that Qt has been installed and that we're using its mingw build)
+
+1. Install Msys - be sure to point it to C:/QtSDK/mingw
+2. Go to the ffmpeg directory
+3. Run configure in an Msys window as follows:
+
+$ ./configure --disable-everything --enable-decoder=h264 --enable-parser=h264 --enable-shared --disable-yasm --disable-asm --disable-doc --disable-ffmpeg --disable-avdevice --disable-avformat --disable-swresample --disable-swscale --disable-postproc --disable-avfilter --disable-static
+
+4. Run mingw32-make. The build produces some warnings but shouldn't have any errors.
+
